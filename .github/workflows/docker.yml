@@ -1,0 +1,70 @@
+name: Docker Images
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - "v*"
+    paths:
+      - .github/workflows/docker.yml
+      - "Dockerfile"
+
+jobs:
+
+  Docker-Bake:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      # matrix: 
+      #   target: ['alpine', 'distroless']
+    steps:
+
+    - name: Login to Docker
+      uses: docker/login-action@v2
+      if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Login To GitHub
+      uses: docker/login-action@v2
+      if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Docker Meta
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: cyb3rjak3/workerd,ghcr.io/cyb3r-jak3/workerd
+        tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+        labels: |
+          org.label-schema.vcs-url=https://github.com/Cyb3r-Jak3/docker-udpt.git
+          org.label-schema.schema-version=1.0.0-rc1
+          maintainer=Cyb3r Jak3 git@cyberjake.xyz
+          org.opencontainers.image.vendor=cyb3rjak3
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    -  name: Build and push
+      uses: docker/build-push-action@v3
+      with:
+        push: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
