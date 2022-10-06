@@ -36,6 +36,7 @@ jobs:
       with:
         images: cyb3rjak3/workerd,ghcr.io/cyb3r-jak3/workerd
         tags: |
+            type=ref,event=tag
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}

@@ -4,6 +4,6 @@ Run [Cloudflare Workerd](https://github.com/cloudflare/workerd) in a docker cont
 
 ## Using
 
-With `workerd.capnp` and other worker javascript files in a subdirectory of `./workerd`.
+With `workerd.capnp` and other worker javascript files in a subdirectory of [`./example`](./example/).
 
-`docker run -p 8080:8080 -v $(pwd)/example:/workerd ghcr.io/cyb3r-jak3/workerd:latest`
+`docker run --init -p 8080:8080 -v $(pwd)/example:/workerd ghcr.io/cyb3r-jak3/workerd:latest`
