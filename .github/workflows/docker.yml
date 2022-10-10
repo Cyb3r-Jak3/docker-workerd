@@ -14,8 +14,9 @@ jobs:
   docker:
     strategy:
       matrix:
-        arch: ["linux/arm64", "linux/amd64"]
-    runs-on: ubuntu-latest
+        # arch: ["linux/arm64", "linux/amd64"]
+        runs-on: ["ubuntu-latest", "docker-arm"]
+    runs-on: ${{ matrix.runs-on }}
     steps:
 
     - name: Login to Docker
@@ -66,4 +67,4 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=registry,ref=ghcr.io/cyb3r-jak3/workerd-cache
         cache-to: type=registry,mode=max,ref=ghcr.io/cyb3r-jak3/workerd-cache
-        platforms: ${{ matrix.arch }}
+        platforms: ${{ "linux/arm64" if matrix.runs-on == "docker-arm" else "ubuntu-latest" }}
