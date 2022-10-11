@@ -14,7 +14,6 @@ jobs:
   docker:
     strategy:
       matrix:
-        # arch: ["linux/arm64", "linux/amd64"]
         runs-on: ["ubuntu-latest", "docker-arm"]
     runs-on: ${{ matrix.runs-on }}
     steps:
