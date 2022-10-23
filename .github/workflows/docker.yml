@@ -12,10 +12,7 @@ on:
 
 jobs:
   docker:
-    strategy:
-      matrix:
-        runs-on: ["ubuntu-latest", "self-hosted"]
-    runs-on: ${{ matrix.runs-on }}
+    runs-on: "self-hosted"
     steps:
 
     - name: Login to Docker
