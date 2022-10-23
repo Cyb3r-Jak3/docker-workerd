@@ -63,4 +63,4 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=registry,ref=ghcr.io/cyb3r-jak3/workerd-cache:latest
         cache-to: type=registry,mode=max,ref=ghcr.io/cyb3r-jak3/workerd-cache:latest
-        platforms: "linux/arm64,linux/amd64
+        platforms: linux/arm64,linux/amd64
