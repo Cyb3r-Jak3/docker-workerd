@@ -12,7 +12,10 @@ on:
 
 jobs:
   docker:
-    runs-on: "self-hosted"
+    strategy:
+      matrix:
+        runs-on: ["self-hosted"]
+    runs-on: ${{ matrix.runs-on }}
     steps:
 
     - name: Login to Docker
@@ -55,15 +58,15 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: select platform
-      env:
-        RUNS_ON: ${{ matrix.runs-on }}
-      run: |
-        if [ $RUNS_ON = "docker-arm" ]; then
-            echo "PLATFORM=linux/arm64" >> $GITHUB_ENV
-        else
-            echo "PLATFORM=linux/amd64" >> $GITHUB_ENV
-        fi
+    # - name: select platform
+    #   env:
+    #     RUNS_ON: ${{ matrix.runs-on }}
+    #   run: |
+    #     if [ $RUNS_ON = "docker-arm" ]; then
+    #         echo "PLATFORM=linux/arm64" >> $GITHUB_ENV
+    #     else
+    #         echo "PLATFORM=linux/amd64" >> $GITHUB_ENV
+    #     fi
 
     - name: Build and Push
       uses: docker/build-push-action@v3
