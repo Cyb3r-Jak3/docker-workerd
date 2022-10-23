@@ -12,10 +12,7 @@ on:
 
 jobs:
   docker:
-    strategy:
-      matrix:
-        runs-on: ["ubuntu-latest", "docker-arm"]
-    runs-on: ${{ matrix.runs-on }}
+    runs-on: "docker-arm"
     steps:
 
     - name: Login to Docker
@@ -58,15 +55,15 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: select platform
-      env:
-        RUNS_ON: ${{ matrix.runs-on }}
-      run: |
-        if [ $RUNS_ON = "docker-arm" ]; then
-            echo "PLATFORM=linux/arm64" >> $GITHUB_ENV
-        else
-            echo "PLATFORM=linux/amd64" >> $GITHUB_ENV
-        fi
+    # - name: select platform
+    #   env:
+    #     RUNS_ON: ${{ matrix.runs-on }}
+    #   run: |
+    #     if [ $RUNS_ON = "docker-arm" ]; then
+    #         echo "PLATFORM=linux/arm64" >> $GITHUB_ENV
+    #     else
+    #         echo "PLATFORM=linux/amd64" >> $GITHUB_ENV
+    #     fi
 
     - name: Build and Push
       uses: docker/build-push-action@v3
@@ -76,4 +73,4 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=registry,ref=ghcr.io/cyb3r-jak3/workerd-cache:${{ matrix.runs-on }}
         cache-to: type=registry,mode=max,ref=ghcr.io/cyb3r-jak3/workerd-cache:${{ matrix.runs-on }}
-        platforms: ${{ env.PLATFORM }}
+        platforms: linux/arm64,linux/amd64
