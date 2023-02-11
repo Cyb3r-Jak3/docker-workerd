@@ -10,9 +10,18 @@ on:
       - .github/workflows/docker.yml
       - "Dockerfile"
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   docker:
-    runs-on: self-hosted
+    runs-on: ${{ matrix.RUNNER }}
+    strategy:
+      fail-fast: true
+      matrix:
+        RUNNER: ["self-hosted", "ubuntu-latest"]
+
     steps:
 
     - name: Login to Docker
@@ -55,6 +64,16 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Select build platform
+      env:
+        RUNS_ON: ${{ matrix.RUNNER }}
+      run: |
+        if [ $RUNS_ON = "self-hosted" ]; then
+            echo "ARCH=arm64" >> $GITHUB_ENV
+        else
+            echo "ARCH=amd64" >> $GITHUB_ENV
+        fi
+
     - name: Build and Push
       uses: docker/build-push-action@v3
       with:
@@ -63,4 +82,4 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=registry,ref=ghcr.io/cyb3r-jak3/workerd-cache:latest
         cache-to: type=registry,mode=max,ref=ghcr.io/cyb3r-jak3/workerd-cache:latest
-        platforms: linux/arm64,linux/amd64
+        platforms: linux/${{ env.ARCH }}
